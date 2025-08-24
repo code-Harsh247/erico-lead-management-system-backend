@@ -13,9 +13,14 @@ const port = process.env.PORT || 3001;
 app.set('query parser', (str) => {
   return qs.parse(str, { allowPrototypes: true });
 });
-console.log('CORS_ORIGIN from .env:', process.env.CORS_ORIGIN);
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://erico-lead-management-system.vercel.app"
+]
+// console.log('CORS_ORIGIN from .env:', process.env.CORS_ORIGIN);
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: allowedOrigins,
     credentials: true,
 }));
 app.use(express.json());
