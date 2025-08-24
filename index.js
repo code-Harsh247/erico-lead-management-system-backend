@@ -1,35 +1,28 @@
 require('dotenv').config();
 const express = require('express');
+const qs = require('qs');
 const cors = require('cors');
-const cookieParser = require('cookie-parser'); 
-const pool = require('./db'); 
-const authRoutes = require('./auth'); 
-const authMiddleware = require('./authMiddleware'); 
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./auth');
+const leadRoutes = require('./leads');
+const authMiddleware = require('./authMiddleware');
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 3001;
 
+app.set('query parser', (str) => {
+  return qs.parse(str, { allowPrototypes: true });
+});
+console.log('CORS_ORIGIN from .env:', process.env.CORS_ORIGIN);
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
-    credentials: true, 
+    credentials: true,
 }));
-app.use(express.json()); 
-app.use(cookieParser()); 
+app.use(express.json());
+app.use(cookieParser());
 
-app.use('/api/auth', authRoutes); 
-
-
-app.get('/api/leads', authMiddleware, async (req, res) => {
-  try {
-    console.log('Fetching leads for user:', req.user.email);
-    const allLeads = await pool.query('SELECT * FROM Leads'); 
-    res.json(allLeads.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
-
+app.use('/api/auth', authRoutes);
+app.use('/api/leads', authMiddleware, leadRoutes);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
