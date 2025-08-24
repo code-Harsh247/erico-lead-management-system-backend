@@ -21,6 +21,14 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+app.get('/api/ping', (req, res) => {
+  res.json({ 
+    message: 'Server is running!', 
+    timestamp: new Date().toISOString(),
+    status: 'OK'
+  });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', authMiddleware, leadRoutes);
 
