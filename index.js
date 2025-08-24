@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get('/api/ping', (req, res) => {
+  console.log("Server pinged!");
   res.json({ 
     message: 'Server is running!', 
     timestamp: new Date().toISOString(),
